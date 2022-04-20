@@ -1,0 +1,3 @@
+[submodule "src/bin/arithmetical/tests/unit/lib/googletest"]
+	path = src/bin/arithmetical/tests/unit/lib/googletest
+	url = https://github.com/google/googletest

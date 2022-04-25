@@ -2,73 +2,217 @@
 
 #include "bitset.hpp"
 
-using namespace arithmetical;
+using namespace arithmetical::details;
 
 TEST(BitsetTest, DirectCodeTest) {
-    Bitset sBitset1(3, 5, 8, arithmetical::Code::DIRECT);
-    ASSERT_EQ("00011", sBitset1.to_string());
-    Bitset sBitset2(-3, 5, 8, arithmetical::Code::DIRECT);
-    ASSERT_EQ("10011", sBitset2.to_string());
+    {
+        DirectBitset sBitset(10);
+        ASSERT_EQ("000001010", sBitset.toString());
+    }
+    {
+        DirectBitset sBitset(-10);
+        ASSERT_EQ("100001010", sBitset.toString());
+    }
 }
 
 TEST(BitsetTest, ReverseCodeTest) {
-    Bitset sBitset1(3, 5, 8, arithmetical::Code::REVERSE);
-    ASSERT_EQ("00011", sBitset1.to_string());
-    Bitset sBitset2(-3, 5, 8, arithmetical::Code::REVERSE);
-    ASSERT_EQ("11100", sBitset2.to_string());
+    {
+        ReverseBitset sBitset(10);
+        ASSERT_EQ("000001010", sBitset.toString());
+    }
+    {
+        ReverseBitset sBitset(-10);
+        ASSERT_EQ("111110101", sBitset.toString());
+    }
 }
 
 TEST(BitsetTest, AdditipnalCodeTest) {
-    Bitset sBitset1(3, 5, 8, arithmetical::Code::ADDITIONAL);
-    ASSERT_EQ("00011", sBitset1.to_string());
-    Bitset sBitset2(-3, 5, 8, arithmetical::Code::ADDITIONAL);
-    ASSERT_EQ("11101", sBitset2.to_string());
+    {
+        AdditionalBitset sBitset(10);
+        ASSERT_EQ("000001010", sBitset.toString());
+    }
+    {
+        AdditionalBitset sBitset(-10);
+        ASSERT_EQ("111110110", sBitset.toString());
+    }
 }
 
 TEST(BitsetTest, InvertTest) {
-    ASSERT_EQ("11100", (~Bitset(0b00011, 5, 8)).to_string());
-    ASSERT_EQ("011001", (~Bitset(0b100110, 6, 8)).to_string());
+    {
+        DirectBitset sBitset(10);
+        auto sInvertBitset = sBitset.invert();
+        ASSERT_EQ("111110101", sInvertBitset->toString());
+    }
+    {
+        ReverseBitset sBitset(10);
+        auto sInvertBitset = sBitset.invert();
+        ASSERT_EQ("111110101", sInvertBitset->toString());
+    }
 
-    ASSERT_EQ("11100", (~Bitset(0b00011, 5, 8, arithmetical::Code::REVERSE)).to_string());
-    ASSERT_EQ("011001", (~Bitset(0b100110, 6, 8, arithmetical::Code::REVERSE)).to_string());
-
-    ASSERT_EQ("11100", (~Bitset(0b00011, 5, 8, arithmetical::Code::ADDITIONAL)).to_string());
-    ASSERT_EQ("011001", (~Bitset(0b100110, 6, 8, arithmetical::Code::ADDITIONAL)).to_string());
+    {
+        ReverseBitset sBitset(10);
+        auto sInvertBitset = sBitset.invert();
+        ASSERT_EQ("111110101", sInvertBitset->toString());
+    }
 }
 
-TEST(BitsetTest, InvertSignPositiveToNegativeTest) {
-    Bitset sBitset1(0b00011, 5, 8, arithmetical::Code::DIRECT);
-    ASSERT_EQ("00011", sBitset1.to_string());
-    ASSERT_EQ("10011", sBitset1.invertSign().to_string());
+TEST(BitsetTest, InvertSignTest) {
+    {
+        DirectBitset sBitset(10);
+        auto sInvertBitset = sBitset.invertSign();
+        ASSERT_EQ("100001010", sInvertBitset->toString());
+        ASSERT_EQ(-10, sInvertBitset->toInt());
+    }
+    {
+        ReverseBitset sBitset(10);
+        auto sInvertBitset = sBitset.invertSign();
+        ASSERT_EQ("111110101", sInvertBitset->toString());
+        ASSERT_EQ(-10, sInvertBitset->toInt());
+    }
 
-    Bitset sBitset2(0b00011, 5, 8, arithmetical::Code::REVERSE);
-    ASSERT_EQ("00011", sBitset2.to_string());
-    ASSERT_EQ("11100", sBitset2.invertSign().to_string());
-
-    Bitset sBitset3(0b00011, 5, 8, arithmetical::Code::ADDITIONAL);
-    ASSERT_EQ("00011", sBitset3.to_string());
-    ASSERT_EQ("11101", sBitset3.invertSign().to_string());
-}
-
-TEST(BitsetTest, InvertSignNegativeToPositiveTest) {
-    Bitset sBitset1(0b10011, 5, 8, arithmetical::Code::DIRECT);
-    ASSERT_EQ("10011", sBitset1.to_string());
-    ASSERT_EQ("00011", sBitset1.invertSign().to_string());
-
-    Bitset sBitset2(0b11100, 5, 8, arithmetical::Code::REVERSE);
-    ASSERT_EQ("11100", sBitset2.to_string());
-    ASSERT_EQ("00011", sBitset2.invertSign().to_string());
-
-    Bitset sBitset3(0b11101, 5, 8, arithmetical::Code::ADDITIONAL);
-    ASSERT_EQ("11101", sBitset3.to_string());
-    ASSERT_EQ("00011", sBitset3.invertSign().to_string());
-
+    {
+        ReverseBitset sBitset(10);
+        auto sInvertBitset = sBitset.invertSign();
+        ASSERT_EQ("111110101", sInvertBitset->toString());
+        ASSERT_EQ(-10, sInvertBitset->toInt());
+    }
 }
 
 TEST(BitsetTest, LeftShiftTest) {
-    ASSERT_EQ("000110", (Bitset(0b00011, 5, 8) <<= 1).to_string());
+    {
+        DirectBitset sBitset(10);
+        sBitset.leftShift(1);
+        ASSERT_EQ("000010100", sBitset.toString());
+        sBitset.leftShift(2);
+        ASSERT_EQ("001010000", sBitset.toString());
+        sBitset.leftShift(3);
+        ASSERT_EQ("010000000", sBitset.toString());
+        sBitset.leftShift(2);
+        ASSERT_EQ("000000000", sBitset.toString());
+        sBitset = DirectBitset(-10);
+        sBitset.leftShift(1);
+        ASSERT_EQ("100010100", sBitset.toString());
+        sBitset.leftShift(2);
+        ASSERT_EQ("101010000", sBitset.toString());
+        sBitset.leftShift(3);
+        ASSERT_EQ("110000000", sBitset.toString());
+        sBitset.leftShift(2);
+        ASSERT_EQ("100000000", sBitset.toString());
+    }
+
+    {
+        ReverseBitset sBitset(10);
+        sBitset.leftShift(1);
+        ASSERT_EQ("000010100", sBitset.toString());
+        sBitset.leftShift(2);
+        ASSERT_EQ("001010000", sBitset.toString());
+        sBitset.leftShift(3);
+        ASSERT_EQ("010000000", sBitset.toString());
+        sBitset.leftShift(2);
+        ASSERT_EQ("000000000", sBitset.toString());
+        sBitset = ReverseBitset(-10);
+        sBitset.leftShift(1);
+        ASSERT_EQ("111101010", sBitset.toString());
+        sBitset.leftShift(2);
+        ASSERT_EQ("110101000", sBitset.toString());
+        sBitset.leftShift(3);
+        ASSERT_EQ("101000000", sBitset.toString());
+        sBitset.leftShift(2);
+        ASSERT_EQ("100000000", sBitset.toString());
+    }
+
+    {
+        AdditionalBitset sBitset(10);
+        sBitset.leftShift(1);
+        ASSERT_EQ("000010100", sBitset.toString());
+        sBitset.leftShift(2);
+        ASSERT_EQ("001010000", sBitset.toString());
+        sBitset.leftShift(3);
+        ASSERT_EQ("010000000", sBitset.toString());
+        sBitset.leftShift(2);
+        ASSERT_EQ("000000000", sBitset.toString());
+        sBitset = AdditionalBitset(-10);
+        sBitset.leftShift(1);
+        ASSERT_EQ("111101100", sBitset.toString());
+        sBitset.leftShift(2);
+        ASSERT_EQ("110110000", sBitset.toString());
+        sBitset.leftShift(3);
+        ASSERT_EQ("110000000", sBitset.toString());
+        sBitset.leftShift(1);
+        ASSERT_EQ("000000000", sBitset.toString());
+    }
 }
 
 TEST(BitsetTest, RightShiftTest) {
-    ASSERT_EQ("0001", (Bitset(0b00011, 5, 8) >>= 1).to_string());
+    {
+        DirectBitset sBitset(10);
+        sBitset.rightShift(1);
+        ASSERT_EQ("000000101", sBitset.toString());
+        sBitset.rightShift(2);
+        ASSERT_EQ("000000001", sBitset.toString());
+        sBitset.rightShift(2);
+        ASSERT_EQ("000000000", sBitset.toString());
+        sBitset = DirectBitset(-10);
+        sBitset.rightShift(1);
+        ASSERT_EQ("100000101", sBitset.toString());
+        sBitset.rightShift(2);
+        ASSERT_EQ("100000001", sBitset.toString());
+        sBitset.rightShift(2);
+        ASSERT_EQ("100000000", sBitset.toString());
+    }
+
+    {
+        ReverseBitset sBitset(10);
+        sBitset.rightShift(1);
+        ASSERT_EQ("000000101", sBitset.toString());
+        sBitset.rightShift(2);
+        ASSERT_EQ("000000001", sBitset.toString());
+        sBitset.rightShift(2);
+        ASSERT_EQ("000000000", sBitset.toString());
+        sBitset = ReverseBitset(-10);
+        sBitset.rightShift(1);
+        ASSERT_EQ("111111010", sBitset.toString());
+        sBitset.rightShift(2);
+        ASSERT_EQ("111111110", sBitset.toString());
+        sBitset.rightShift(2);
+        ASSERT_EQ("111111111", sBitset.toString());
+    }
+
+    {
+        AdditionalBitset sBitset(10);
+        sBitset.rightShift(1);
+        ASSERT_EQ("000000101", sBitset.toString());
+        sBitset.rightShift(2);
+        ASSERT_EQ("000000001", sBitset.toString());
+        sBitset.rightShift(2);
+        ASSERT_EQ("000000000", sBitset.toString());
+        sBitset = AdditionalBitset(-10);
+        sBitset.rightShift(1);
+        ASSERT_EQ("111111011", sBitset.toString());
+        sBitset.rightShift(2);
+        ASSERT_EQ("111111110", sBitset.toString());
+        sBitset.rightShift(2);
+        ASSERT_EQ("111111111", sBitset.toString());
+        sBitset.rightShift(2);
+        ASSERT_EQ("111111111", sBitset.toString());
+    }
+}
+
+TEST(BitsetTest, toIntAdditionalTest) {
+    {
+        AdditionalBitset sBitset(10);
+        sBitset = AdditionalBitset(-10);
+        sBitset.leftShift(1);
+        ASSERT_EQ(-20, sBitset.toInt());
+        sBitset.leftShift(60);
+        ASSERT_EQ(0, sBitset.toInt());
+    }
+    {
+        AdditionalBitset sBitset(10);
+        sBitset = AdditionalBitset(-10);
+        sBitset.rightShift(1);
+        ASSERT_EQ(-5, sBitset.toInt());
+        sBitset.rightShift(60);
+        ASSERT_EQ(-1, sBitset.toInt());
+    }
 }

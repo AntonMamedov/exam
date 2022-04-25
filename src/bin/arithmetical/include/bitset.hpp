@@ -29,6 +29,7 @@ namespace arithmetical::details {
         virtual void leftShift(size_t aPos) = 0;
         virtual void rightShift(size_t aPos) = 0;
         virtual bit_t get(size_t aPos) const = 0;
+        virtual bit_t invertGet(size_t aPos) const = 0;
         virtual ptr invert() const = 0;
         virtual int toInt() const = 0;
         virtual bool isPositive() const = 0;
@@ -48,8 +49,18 @@ namespace arithmetical::details {
         };
 
         bit_t get(size_t aPos) const override {
+            if (aPos == m_GridSize) {
+                return m_SignBit;
+            }
             return m_Data[aPos];
         };
+
+        bit_t invertGet(size_t aPos) const override {
+            if (aPos == 0) {
+                return m_SignBit;
+            }
+            return m_Data[m_GridSize - aPos];
+        }
 
         bool isPositive() const override {
             return !m_SignBit;

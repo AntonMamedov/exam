@@ -5,7 +5,6 @@ using namespace arithmetical::details;
 namespace {
     constexpr const size_t MINIMAL_GRID_SIZE = 2;
     constexpr const auto MINIMAL_NUMBER_SIZE_ERROR = "number must be greater than 2\n";
-    constexpr const auto DIFFERENT_CODES_ERRORS = "added values cannot be represented in different codes\n";
     constexpr const auto BIT_MASK = 0xFFFFFFFFFFFFFFFFUL;
 }
 
@@ -50,6 +49,11 @@ int DirectBitset::toInt() const {
 iBitset::ptr DirectBitset::invertSign() const {
     auto sBitset = std::make_unique<DirectBitset>(*this);
     sBitset->m_SignBit = ~sBitset->m_SignBit;
+    return std::move(sBitset);
+}
+
+iBitset::ptr DirectBitset::copy() const {
+    auto sBitset = std::make_unique<DirectBitset>(*this);
     return std::move(sBitset);
 }
 
@@ -100,6 +104,11 @@ iBitset::ptr ReverseBitset::invertSign() const {
     return this->invert();
 }
 
+iBitset::ptr ReverseBitset::copy() const {
+    auto sBitset = std::make_unique<ReverseBitset>(*this);
+    return std::move(sBitset);
+}
+
 AdditionalBitset::AdditionalBitset(int aData, size_t aGridSize) {
     m_GridSize = aGridSize;
     if (aGridSize < MINIMAL_GRID_SIZE)
@@ -136,7 +145,6 @@ iBitset::ptr AdditionalBitset::invert() const {
     return std::move(sBitset);
 }
 
-#include "iostream"
 int AdditionalBitset::toInt() const {
     if (!m_SignBit)
         return static_cast<int>(m_Data.to_ulong());
@@ -150,5 +158,10 @@ iBitset::ptr AdditionalBitset::invertSign() const {
     sData = ~sData;
     sData += 1;
     sBitset->m_Data = bits_t(m_GridSize, sData);
+    return std::move(sBitset);
+}
+
+iBitset::ptr AdditionalBitset::copy() const {
+    auto sBitset = std::make_unique<AdditionalBitset>(*this);
     return std::move(sBitset);
 }

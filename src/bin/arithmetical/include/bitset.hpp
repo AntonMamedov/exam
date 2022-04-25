@@ -36,6 +36,7 @@ namespace arithmetical::details {
         virtual std::string toString() const = 0;
         virtual ptr invertSign() const = 0;
         virtual bits_t bitset() const = 0;
+        virtual ptr copy() const = 0;
         virtual ~iBitset() = default;
     };
 
@@ -79,7 +80,7 @@ namespace arithmetical::details {
         ptr invert() const override;
         int toInt() const override;
         ptr invertSign() const override;
-
+        ptr copy() const override;
         Code code() const override {
             return Code::DIRECT;
         };
@@ -94,7 +95,7 @@ namespace arithmetical::details {
         ptr invert() const override;
         int toInt() const override;
         ptr invertSign() const override;
-
+        ptr copy() const override;
         Code code() const override {
             return Code::REVERSE;
         };
@@ -109,7 +110,7 @@ namespace arithmetical::details {
         ptr invert() const override;
         int toInt() const override;
         ptr invertSign() const override;
-
+        ptr copy() const override;
         Code code() const override {
             return Code::ADDITIONAL;
         };

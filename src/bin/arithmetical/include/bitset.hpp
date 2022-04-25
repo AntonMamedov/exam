@@ -37,6 +37,7 @@ namespace arithmetical::details {
         virtual ptr invertSign() const = 0;
         virtual bits_t bitset() const = 0;
         virtual ptr copy() const = 0;
+        virtual size_t size() const = 0;
         virtual ~iBitset() = default;
     };
 
@@ -65,6 +66,10 @@ namespace arithmetical::details {
             auto sBitset = m_Data;
             sBitset.push_back(m_SignBit);
             return sBitset;
+        }
+
+        size_t size() const override{
+            return m_GridSize + 1;
         }
     protected:
         size_t m_GridSize;

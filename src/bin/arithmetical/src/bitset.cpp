@@ -165,3 +165,7 @@ iBitset::ptr AdditionalBitset::copy() const {
     auto sBitset = std::make_unique<AdditionalBitset>(*this);
     return std::move(sBitset);
 }
+
+bits_t addBitsets(const bits_t & aLeft, const bits_t & aRight) {
+    return bits_t (aLeft.size(), aLeft.to_ulong() + aRight.to_ulong());
+}

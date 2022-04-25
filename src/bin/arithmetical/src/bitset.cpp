@@ -158,6 +158,7 @@ iBitset::ptr AdditionalBitset::invertSign() const {
     sData = ~sData;
     sData += 1;
     sBitset->m_Data = bits_t(m_GridSize, sData);
+    sBitset->m_SignBit = ~sBitset->m_SignBit;
     return std::move(sBitset);
 }
 
@@ -166,6 +167,6 @@ iBitset::ptr AdditionalBitset::copy() const {
     return std::move(sBitset);
 }
 
-bits_t addBitsets(const bits_t & aLeft, const bits_t & aRight) {
+bits_t arithmetical::details::addBitsets(const bits_t & aLeft, const bits_t & aRight) {
     return bits_t (aLeft.size(), aLeft.to_ulong() + aRight.to_ulong());
 }

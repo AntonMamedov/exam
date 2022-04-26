@@ -42,6 +42,10 @@ namespace arithmetical::details {
 
         explicit Bitset(int aData, size_t aGridSize = DEFAULT_GRID_SIZE);
 
+        bit_t sign() const {
+            return m_SignBit;
+        }
+
         Bitset operator-() const;
         explicit operator int() const;
 

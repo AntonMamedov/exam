@@ -119,7 +119,7 @@ namespace arithmetical::details {
         }
 
         ReverseReference reverse() {
-            return {*this};
+            return ReverseReference(*this);
         }
     private:
         size_t m_GridSize;

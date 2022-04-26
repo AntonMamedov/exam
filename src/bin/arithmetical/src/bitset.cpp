@@ -84,3 +84,12 @@ Bitset<Code::ADDITIONAL>::operator int() const {
 
     return -static_cast<int>((~m_Data).to_ulong() + 1);
 }
+
+bits_t arithmetical::details::operator+(const bits_t & aLeft, const bits_t & aRight) {
+    uint64_t sRes = aLeft.to_ulong() + aRight.to_ulong();
+    size_t sSize = aLeft.size() > aRight.size() ? aLeft.size() : aRight.size();
+    uint64_t sLimit = BIT_MASK >> ((sizeof(uint64_t) * 8) - sSize);
+    if (sRes > sLimit)
+        sSize++;
+    return bits_t(sSize, sRes);
+}

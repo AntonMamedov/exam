@@ -18,4 +18,4 @@ include_directories(include)
 
 add_subdirectory(tests/unit)
 
-add_executable(arithmetical ${SRC})
+add_executable(arithmetical src/main.cpp)

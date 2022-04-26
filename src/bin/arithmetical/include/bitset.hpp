@@ -145,4 +145,6 @@ namespace arithmetical::details {
     using DirectBitset = Bitset<Code::DIRECT>;
     using ReverseBitset = Bitset<Code::REVERSE>;
     using AdditionalBitset = Bitset<Code::ADDITIONAL>;
+
+    bits_t operator + (const bits_t& aLeft, const bits_t& aRight);
 }

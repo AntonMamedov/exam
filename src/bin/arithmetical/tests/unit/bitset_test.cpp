@@ -266,3 +266,15 @@ TEST(BitsetTest, toIntReverceTest) {
         ASSERT_EQ(0, static_cast<int>(sBitset));
     }
 }
+
+TEST(BitsetTest, AddBitsetsTest) {
+    bits_t sVal1(9, 0b110110111);
+    bits_t sVal2(9, 0b111011011);
+
+    auto sRes = sVal1 + sVal2;
+
+    std::string sResStr;
+    to_string(sRes, sResStr);
+
+    ASSERT_EQ(sResStr, "1110010010");
+}

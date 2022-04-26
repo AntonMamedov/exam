@@ -160,6 +160,8 @@ Multiplier::mulWithCurrentStep(const ReverseBitset & aMul,
         std::string sVal1 = bitset2string(sPartialSum);
         std::string sVal2 = bitset2string(sBitset);
         sPartialSum = sPartialSum + sBitset;
+        if (sBitset.none())
+            sAction = Action::NONE;
 
         if (sPartialSum.size() > sMul.size()) {
             sIsOverflow = true;
@@ -249,6 +251,80 @@ Multiplier::Result Multiplier::mulWithAnalysisAdjacentBits(const AdditionalBitse
     return Result{
             .m_Code = Code::ADDITIONAL,
             .m_Method = Method::ANALYSIS_ADJACENT_BITS,
+            .m_Val1 = bitset2string(aMul.bitset()).substr(aMul.size() - m_NumberSize),
+            .m_Val2 = bitset2string(aFactor.bitset()).substr(aFactor.size() - m_NumberSize),
+            .m_Result = bitset2string(sPartialSum),
+            .m_IntermediateExps = std::move(sExps)
+    };
+}
+
+Multiplier::Result
+Multiplier::mulWithInvertNumberBits(const ReverseBitset & aMul, const ReverseBitset & aFactor) const {
+    auto sMul = aFactor.sign() ? -aMul : aMul;
+    auto sFactor = aFactor.sign() ? -aFactor : aFactor;
+
+    sMul <<= sMul.size() - (m_NumberSize);
+    sFactor <<= sFactor.size() - (m_NumberSize);
+
+    std::queue<bits_t> sBitsets;
+    auto sReverseFactor = sFactor.reverse();
+    for (size_t i = 1; i < m_NumberSize; i++) {
+
+        if (!sReverseFactor[i]) {
+            sBitsets.push(bits_t (sMul.size(), 0));
+            continue;
+        }
+        auto sCurrent = sMul;
+        sCurrent >>= i;
+        sBitsets.push(sCurrent.bitset());
+    }
+
+    std::vector<Expression> sExps;
+    bits_t sPartialSum(sMul.size(), 0);
+
+    bool sIsOverflow = false;
+    while (!sBitsets.empty()) {
+        auto sAction = Action::ADD;
+        auto sBitset= sBitsets.front();
+        if (sIsOverflow) {
+            sBitset = bits_t(sBitset.size(), 1);
+            sIsOverflow = false;
+        } else
+            sBitsets.pop();
+        std::string sVal1 = bitset2string(sPartialSum);
+        std::string sVal2 = bitset2string(sBitset);
+        sPartialSum = sPartialSum + sBitset;
+        if (sBitset.none())
+            sAction = Action::NONE;
+
+        if (sPartialSum.size() > sMul.size()) {
+            sIsOverflow = true;
+            sPartialSum.pop_back();
+        }
+
+        sExps.emplace_back(Expression{
+                .m_Val1 = sVal1,
+                .m_Val2 = sVal2,
+                .m_Action = sAction,
+                .m_IsCorrectionStep = false,
+                .m_IsOverflow = sIsOverflow
+        });
+    }
+
+    if (sIsOverflow) {
+        sExps.emplace_back(Expression{
+                .m_Val1 = bitset2string(sPartialSum),
+                .m_Val2 = bitset2string(bits_t(sMul.size(), 1)),
+                .m_Action = Action::ADD,
+                .m_IsCorrectionStep = false,
+                .m_IsOverflow = sIsOverflow
+        });
+        sPartialSum = sPartialSum + bits_t(sMul.size(), 1);
+    }
+
+    return Result{
+            .m_Code = Code::REVERSE,
+            .m_Method = Method::INVERT_NUMBER_BITS,
             .m_Val1 = bitset2string(aMul.bitset()).substr(aMul.size() - m_NumberSize),
             .m_Val2 = bitset2string(aFactor.bitset()).substr(aFactor.size() - m_NumberSize),
             .m_Result = bitset2string(sPartialSum),

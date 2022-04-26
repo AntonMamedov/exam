@@ -87,6 +87,38 @@ TEST(EngineTst, TestMulWithCorrectionStepReverseCode) {
     ASSERT_EQ(sResult.m_Result, "001101100");
 }
 
+TEST(EngineTst, TestMulWithInvertNumberBits) {
+    ReverseBitset sMul(9, 8);
+    ReverseBitset sFactor(-12, 8);
+
+    Multiplier sMultiplier(5);
+
+    auto sResult = sMultiplier.mulWithInvertNumberBits(sMul, sFactor);
+
+    ASSERT_EQ(sResult.m_Result, "110010011");
+
+    sMul = ReverseBitset(-9, 8);
+    sFactor = ReverseBitset(12, 8);
+
+    sResult = sMultiplier.mulWithInvertNumberBits(sMul, sFactor);
+
+    ASSERT_EQ(sResult.m_Result, "110010011");
+
+    sMul = ReverseBitset(9, 8);
+    sFactor = ReverseBitset(12, 8);
+
+    sResult = sMultiplier.mulWithInvertNumberBits(sMul, sFactor);
+
+    ASSERT_EQ(sResult.m_Result, "001101100");
+
+    sMul = ReverseBitset(-9, 8);
+    sFactor = ReverseBitset(-12, 8);
+
+    sResult = sMultiplier.mulWithInvertNumberBits(sMul, sFactor);
+
+    ASSERT_EQ(sResult.m_Result, "001101100");
+}
+
 TEST(EngineTst, TestMulWithAnalysisAdjacentBits) {
     AdditionalBitset sMul(-9, 8);
     AdditionalBitset sFactor(-13, 8);

@@ -3,17 +3,15 @@
 #include <memory>
 #include <vector>
 
-namespace arithmetical::details {
-    class iBitset;
-
-    enum class Code;
-    using bit_t = bool;
-}
+#include "bitset.hpp"
 
 namespace arithmetical::engine {
 
+    constexpr const auto CODE_NOT_SUPPORT = "this operation does not support this code\n";
+
     enum class Action {
-        ADD = 1,
+        NONE = 0,
+        ADD,
         SUB,
         MUL,
         DIV
@@ -22,24 +20,38 @@ namespace arithmetical::engine {
 
     class Multiplier {
     public:
+        enum class Method {
+            CORRECTION_STEP,
+            ANALYSIS_ADJACENT_BITS
+        };
+
         struct Expression {
             std::string m_Val1;
             std::string m_Val2;
             Action m_Action;
             bool m_IsCorrectionStep;
+            bool m_IsOverflow;
         };
 
         struct Result {
             details::Code m_Code;
+            Method m_Method;
             std::string m_Val1;
             std::string m_Val2;
             std::string m_Result;
             std::vector<Expression> m_IntermediateExps;
         };
+
         explicit Multiplier(size_t aNumberSize) : m_NumberSize(aNumberSize) {}
 
-        Multiplier::Result mulWithCurrentStep(const std::unique_ptr<details::iBitset> & aMul,
-                                              const std::unique_ptr<details::iBitset> & aFactor);
+        template<details::Code code>
+        Multiplier::Result mulWithCurrentStep(const details::Bitset<code> & aMul,
+                                              const details::Bitset<code> & aFactor) const {
+            throw std::logic_error(CODE_NOT_SUPPORT);
+        };
+
+        Multiplier::Result mulWithAnalysisAdjacentBits(const details::AdditionalBitset & aMul,
+                                                       const details::AdditionalBitset & aFactor) const;
     private:
         size_t m_NumberSize;
     };

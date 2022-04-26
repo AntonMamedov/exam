@@ -22,7 +22,8 @@ namespace arithmetical::engine {
     public:
         enum class Method {
             CORRECTION_STEP,
-            ANALYSIS_ADJACENT_BITS
+            ANALYSIS_ADJACENT_BITS,
+            INVERT_NUMBER_BITS
         };
 
         struct Expression {
@@ -42,7 +43,8 @@ namespace arithmetical::engine {
             std::vector<Expression> m_IntermediateExps;
         };
 
-        explicit Multiplier(size_t aNumberSize) : m_NumberSize(aNumberSize) {}
+        explicit Multiplier(size_t aNumberSize) : m_NumberSize(aNumberSize) {
+        }
 
         template<details::Code code>
         Multiplier::Result mulWithCurrentStep(const details::Bitset<code> & aMul,
@@ -52,6 +54,8 @@ namespace arithmetical::engine {
 
         Multiplier::Result mulWithAnalysisAdjacentBits(const details::AdditionalBitset & aMul,
                                                        const details::AdditionalBitset & aFactor) const;
+        Multiplier::Result mulWithInvertNumberBits(const details::ReverseBitset & aMul,
+                                                   const details::ReverseBitset & aFactor) const;
     private:
         size_t m_NumberSize;
     };

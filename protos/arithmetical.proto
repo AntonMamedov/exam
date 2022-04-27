@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+service Arithmetical {
+  rpc Mul(MulRequest) returns (MulResponse){}
+}
+
+message MulRequest {
+  int32 mul = 1;
+  int32 factor = 2;
+  int32 number_size = 3;
+  int32 grid_size = 4;
+  enum Method {
+    CORRECTION_STEP_REVERSE = 0;
+    CORRECTION_STEP_ADDITIONAL = 1;
+    ANALYSIS_ADJACENT_BITS = 2;
+    INVERT_NUMBER_BITS = 3;
+  }
+  Method method = 5;
+}
+
+message Exp {
+  string val1 = 1;
+  string val2 = 2;
+  enum Action {
+    NONE = 0;
+    ADD = 1;
+    SUB = 2;
+    MUL = 3;
+    DIV = 4;
+  }
+  Action act = 3;
+  bool is_overflow = 4;
+  bool is_correction_step = 5;
+}
+
+message MulResponse {
+  string mul = 1;
+  string factor = 2;
+  string result = 4;
+  repeated Exp exps = 3;
+}

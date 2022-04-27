@@ -1,9 +1,16 @@
 #include <iostream>
-#include "bitset.hpp"
-#include "boost/dynamic_bitset.hpp"
 
-int main() {
-    int a = -45;
+#include "service.hpp"
 
-    std::cout << -a;
+
+
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        return 1;
+    }
+
+    std::string sAddr = argv[1];
+
+    arithmetical::service::runService(sAddr);
+    return 0;
 }

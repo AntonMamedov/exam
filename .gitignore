@@ -2,3 +2,4 @@
 *.idea
 etc
 out
+**/proto

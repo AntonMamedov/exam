@@ -1,0 +1,13 @@
+postgres:
+  host: "localhost"
+  port: "5432"
+  username: "ta_tests"
+  password: "1234"
+  db_name: "ta_tests"
+  ssl_mode: "disable"
+
+access_token_ttl: 900      #15 мин
+refresh_token_ttl: 5184000 #60 дней
+salt: "hjqrhjqw124617ajfhajs"
+signing_access_key: "qrkjk#4#%35FSFJlja#4353KSFjH"
+teacher_key: "12345"

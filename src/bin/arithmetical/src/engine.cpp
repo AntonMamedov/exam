@@ -2,6 +2,8 @@
 #include "bitset.hpp"
 
 #include <queue>
+#include <stack>
+#include <optional>
 
 using namespace arithmetical;
 using namespace details;
@@ -16,14 +18,6 @@ namespace {
         return sRes;
     }
 
-    bits_t string2bitset(const std::string & aStr) {
-        bits_t sRes;
-        for (char sBit : aStr) {
-            sRes.push_back(sBit == '1');
-        }
-        return sRes;
-    }
-
     Action bitOrderToAction(bit_t aBi1, bit_t aBit2) {
         if (!aBi1 && aBit2)
             return Action::ADD;
@@ -32,6 +26,20 @@ namespace {
         return Action::NONE;
     }
 
+
+    int bitOrderToMulOnTwoFactorBitsAction(bit_t aLeft, bit_t aRight) {
+        int sAction;
+        if (!aLeft && !aRight) {
+            sAction = 0;
+        } else if (!aLeft && aRight) {
+            sAction = 1;
+        } else if (aLeft && !aRight) {
+            sAction = 2;
+        } else {
+            sAction = 3;
+        }
+        return sAction;
+    }
 }
 
 template<>
@@ -271,7 +279,7 @@ Multiplier::mulWithInvertNumberBits(const ReverseBitset & aMul, const ReverseBit
     for (size_t i = 1; i < m_NumberSize; i++) {
 
         if (!sReverseFactor[i]) {
-            sBitsets.push(bits_t (sMul.size(), 0));
+            sBitsets.push(bits_t(sMul.size(), 0));
             continue;
         }
         auto sCurrent = sMul;
@@ -285,7 +293,7 @@ Multiplier::mulWithInvertNumberBits(const ReverseBitset & aMul, const ReverseBit
     bool sIsOverflow = false;
     while (!sBitsets.empty()) {
         auto sAction = Action::ADD;
-        auto sBitset= sBitsets.front();
+        auto sBitset = sBitsets.front();
         if (sIsOverflow) {
             sBitset = bits_t(sBitset.size(), 1);
             sIsOverflow = false;
@@ -332,3 +340,102 @@ Multiplier::mulWithInvertNumberBits(const ReverseBitset & aMul, const ReverseBit
     };
 }
 
+Multiplier::Result Multiplier::mulOnTwoFactorBits(const DirectBitset & aMul, const DirectBitset & aFactor) const {
+    auto sFactorBitset = aFactor.reverse().bitset();
+    sFactorBitset >>= m_NumberSize;
+    sFactorBitset.resize(sFactorBitset.size() - m_NumberSize);
+    std::vector<int> sActionsList{0};
+    auto sFactorSize = sFactorBitset.size();
+    for (size_t i = 0; i < sFactorSize; i += 2) {
+        auto sAction = bitOrderToMulOnTwoFactorBitsAction(sFactorBitset[i], i < sFactorSize && sFactorBitset[i + 1]);
+        sActionsList.emplace_back(sAction);
+    }
+
+    int sTransfer = 0;
+    for (int i = sActionsList.size() - 1; i >= 0; i--) {
+        sActionsList[i] += sTransfer;
+        sTransfer = 0;
+        if (sActionsList[i] > 2) {
+            sTransfer = (sActionsList[i] + 1) / 4;
+            sActionsList[i] = -1 + (sActionsList[i] + 1) % 4;
+        }
+    }
+
+    std::stack<int> sActions;
+    for (int sAct : sActionsList) {
+        sActions.push(sAct);
+    }
+
+    auto sMul = aMul;
+    sMul <<= sMul.size() - (m_NumberSize);
+    std::vector<std::optional<bits_t>> sBitsets;
+    while (!sActions.empty()) {
+        int sAct = sActions.top();
+        sActions.pop();
+        switch (sAct) {
+            case 0:
+                sBitsets.emplace_back(std::nullopt);
+                break;
+            case 1:
+                sBitsets.emplace_back(sMul.bitset());
+                break;
+            case 2: {
+                auto sBitset = sMul.bitset();
+                sBitset.push_back(OFF);
+                sBitset <<= 1;
+                sBitsets.emplace_back(sBitset);
+                break;
+            }
+            case -1: {
+                AdditionalBitset sAdditionalMul(static_cast<int>(sMul), sMul.size() - 1);
+                sBitsets.emplace_back((-sAdditionalMul).bitset());
+                break;
+            }
+            default:
+                assert(false && "sAct != 0, 1, 2, -1");
+        }
+    }
+
+    std::vector<Expression> sExps;
+    bits_t sPartialSum(aMul.size(), 0);
+    for (auto & sBitset : sBitsets) {
+        bits_t sMask(sPartialSum.size(), sPartialSum[sPartialSum.size() - 1] ? BIT_MASK : 0);
+        sPartialSum >>= 2;
+        sMask <<= sMask.size() - 2;
+        sPartialSum |= sMask;
+        if (sBitset == std::nullopt) {
+            continue;
+        }
+        bit_t sBitsetSign = (*sBitset)[sBitset->size() - 1];
+        if (sPartialSum.size() > aMul.size())
+            sPartialSum.pop_back();
+        if (sBitset->size() > aMul.size())
+            sBitset->pop_back();
+        std::string sVal1 = bitset2string(sPartialSum);
+        std::string sVal2 = bitset2string(*sBitset);
+        sPartialSum = sPartialSum + *sBitset;
+        sExps.emplace_back(Expression{
+                .m_Val1 = sVal1,
+                .m_Val2 = sVal2,
+                .m_Action = {},
+                .m_IsCorrectionStep = false,
+                .m_IsOverflow = false
+        });
+        if (sMask.none() && !sBitsetSign && sPartialSum[sPartialSum.size() - 1]) {
+            sPartialSum.push_back(OFF);
+        }
+    }
+
+    if (sPartialSum.size() > aMul.size()) {
+        sPartialSum.pop_back();
+    }
+
+    return Result{
+            .m_Code = Code::DIRECT,
+            .m_Method = Method::ON_TWO_FACTOR_BITS,
+            .m_Val1 = bitset2string(aMul.bitset()).substr(aMul.size() - m_NumberSize),
+            .m_Val2 = bitset2string(aFactor.bitset()).substr(aFactor.size() - m_NumberSize),
+            .m_Result = bitset2string(sPartialSum),
+            .m_IntermediateExps = std::move(sExps)
+    };
+}

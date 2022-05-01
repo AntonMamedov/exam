@@ -145,3 +145,36 @@ TEST(EngineTst, TestMulWithAnalysisAdjacentBits) {
     sResult = sMultiplier.mulWithAnalysisAdjacentBits(sMul, sFactor);
     ASSERT_EQ(sResult.m_Result, "110001011");
 }
+
+
+TEST(EngineTst, TestMulOnTwoFactorBits) {
+    {
+        DirectBitset sMul(9, 8);
+        DirectBitset sFactor(13, 8);
+
+        Multiplier sMultiplier(5);
+        auto sResult = sMultiplier.mulOnTwoFactorBits(sMul, sFactor);
+
+        ASSERT_EQ(sResult.m_Result, "001110101");
+    }
+
+    {
+        DirectBitset sMul(9, 8);
+        DirectBitset sFactor(15, 8);
+
+        Multiplier sMultiplier(5);
+        auto sResult = sMultiplier.mulOnTwoFactorBits(sMul, sFactor);
+
+        ASSERT_EQ(sResult.m_Result, "010000111");
+    }
+
+    {
+        DirectBitset sMul(9, 8);
+        DirectBitset sFactor(14, 8);
+
+        Multiplier sMultiplier(5);
+        auto sResult = sMultiplier.mulOnTwoFactorBits(sMul, sFactor);
+
+        ASSERT_EQ(sResult.m_Result, "001111110");
+    }
+}

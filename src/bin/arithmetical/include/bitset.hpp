@@ -3,7 +3,7 @@
 #include <boost/dynamic_bitset/dynamic_bitset.hpp>
 #include <memory>
 
-
+#include "iostream"
 namespace arithmetical::details {
     using bits_t = boost::dynamic_bitset<uint16_t>;
     using bit_t = bool;
@@ -27,7 +27,7 @@ namespace arithmetical::details {
     public:
         class ReverseReference {
         public:
-            explicit ReverseReference(Bitset<code> & aRef) : m_Parent{aRef} {
+            explicit ReverseReference(const Bitset<code> & aRef) : m_Parent{aRef} {
             }
 
             bit_t operator[](size_t aPos) const {
@@ -36,8 +36,17 @@ namespace arithmetical::details {
                 }
                 return m_Parent.m_Data[m_Parent.m_GridSize - aPos];
             };
+
+            bits_t bitset() const {
+                bits_t sBitset(0, 0);
+                sBitset.push_back(m_Parent.m_SignBit);
+                for (size_t i = 0; i < m_Parent.m_Data.size(); i++) {
+                    sBitset.push_back(m_Parent.m_Data[m_Parent.m_Data.size() - i - 1]);
+                }
+                return sBitset;
+            }
         private:
-            Bitset<code> & m_Parent;
+            const Bitset<code> & m_Parent;
         };
 
         explicit Bitset(int aData, size_t aGridSize = DEFAULT_GRID_SIZE);
@@ -118,7 +127,7 @@ namespace arithmetical::details {
             return static_cast<int>(*this) != aNum;
         }
 
-        ReverseReference reverse() {
+        ReverseReference reverse() const {
             return ReverseReference(*this);
         }
     private:

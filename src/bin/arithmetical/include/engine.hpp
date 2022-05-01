@@ -17,13 +17,13 @@ namespace arithmetical::engine {
         DIV
     };
 
-
     class Multiplier {
     public:
         enum class Method {
             CORRECTION_STEP,
             ANALYSIS_ADJACENT_BITS,
-            INVERT_NUMBER_BITS
+            INVERT_NUMBER_BITS,
+            ON_TWO_FACTOR_BITS
         };
 
         struct Expression {
@@ -52,10 +52,13 @@ namespace arithmetical::engine {
             throw std::logic_error(CODE_NOT_SUPPORT);
         };
 
+        Multiplier::Result mulOnTwoFactorBits(const details::DirectBitset & aMul,
+                                              const details::DirectBitset & aFactor) const;
         Multiplier::Result mulWithAnalysisAdjacentBits(const details::AdditionalBitset & aMul,
                                                        const details::AdditionalBitset & aFactor) const;
         Multiplier::Result mulWithInvertNumberBits(const details::ReverseBitset & aMul,
                                                    const details::ReverseBitset & aFactor) const;
+
     private:
         size_t m_NumberSize;
     };

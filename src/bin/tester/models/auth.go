@@ -15,3 +15,9 @@ type Registration struct {
 	TeacherKey string `json:"teacher_key,omitempty"`
 	Password   string `json:"password"`
 }
+
+type AuthorizationResponse struct {
+	Prof   interface{} `json:"profile"`
+	Access string      `json:"access_token"`
+	UUID   string
+}

@@ -85,9 +85,6 @@ CREATE FUNCTION create_expires() RETURNS trigger AS
 $create_expires$
 BEGIN
     NEW.expires := NOW() + INTERVAL '2 months';
-
-    INSERT INTO cron.job (schedule, command, nodeport, database, username)
-    VALUES ('15 17 0 0 0', 'DELETE FROM session WHERE id = 1', 5432, 'postgres', 'app');
     RETURN NEW;
 END
 $create_expires$ LANGUAGE plpgsql;
@@ -144,24 +141,3 @@ CREATE TRIGGER check_session
     ON "session"
     FOR EACH ROW
 EXECUTE PROCEDURE check_session();
-
-
--- INSERT INTO "group" (department, cathedra, semester, group_id)
--- VALUES ('К', 3, 7, '4Б');
--- SELECT *
--- FROM "group";
---
--- INSERT INTO profile (login, name, surname, password, role)
--- VALUES ('a', 'b', 'c', 'd', '{"student"}');
---
--- INSERT INTO session (profile_id, user_agent)
--- VALUES (1, 'asd');
---
--- SELECT *
--- from session;
---
--- select *
--- from cron.job;
-
-
--- SELECT cron.schedule('1 * * * *', $$DELETE FROM session WHERE id = 1$$);

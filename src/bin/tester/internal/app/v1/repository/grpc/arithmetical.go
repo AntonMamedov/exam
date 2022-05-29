@@ -38,7 +38,7 @@ func getMethod(code models.CodeEnum, method models.MulMethodEnum) arithmetical.M
 		case 1:
 			break
 		case 2:
-			methodRes = arithmetical.MulRequest_ANALYSIS_ADJACENT_BITS
+			methodRes = arithmetical.MulRequest_MUL_ON_2_FACTOR_BITS
 			break
 		default:
 			panic(fmt.Sprintf("method %d dose not exists", method))

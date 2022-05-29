@@ -46,3 +46,16 @@ func (a ArithmeticalService) Mul(ctx context.Context, mul models.MulRequest) (mo
 	}
 	return mulResp, nil
 }
+
+func (a ArithmeticalService) Code(ctx context.Context, num int32) (models.Codes, error) {
+	resp, err := a.grpcRep.Code(ctx, num)
+	if err != nil {
+		return models.Codes{}, err
+	}
+
+	return models.Codes{
+		Direct:     resp.Direct,
+		Reverse:    resp.Reverse,
+		Additional: resp.Additional,
+	}, nil
+}

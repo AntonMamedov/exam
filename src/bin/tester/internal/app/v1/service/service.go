@@ -19,6 +19,7 @@ type Auth interface {
 
 type Arithmetical interface {
 	Mul(ctx context.Context, mul models.MulRequest) (models.MulResponse, error)
+	Code(ctx context.Context, num int32) (models.Codes, error)
 }
 
 type Service struct {

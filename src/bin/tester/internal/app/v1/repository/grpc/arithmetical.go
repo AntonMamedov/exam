@@ -27,6 +27,18 @@ func (a Arithmetical) Mul(ctx context.Context, data models.MulRequest) (*arithme
 	return resp, nil
 }
 
+func (a Arithmetical) Code(ctx context.Context, num int32) (*arithmetical.CodeResponse, error) {
+	req := &arithmetical.CodeRequest{
+		Num: num,
+	}
+
+	resp, err := a.cl.Code(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 func getMethod(code models.CodeEnum, method models.MulMethodEnum) arithmetical.MulRequest_Method {
 
 	var methodRes arithmetical.MulRequest_Method

@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ArithmeticalClient interface {
 	Mul(ctx context.Context, in *MulRequest, opts ...grpc.CallOption) (*MulResponse, error)
+	Code(ctx context.Context, in *CodeRequest, opts ...grpc.CallOption) (*CodeResponse, error)
 }
 
 type arithmeticalClient struct {
@@ -42,11 +43,21 @@ func (c *arithmeticalClient) Mul(ctx context.Context, in *MulRequest, opts ...gr
 	return out, nil
 }
 
+func (c *arithmeticalClient) Code(ctx context.Context, in *CodeRequest, opts ...grpc.CallOption) (*CodeResponse, error) {
+	out := new(CodeResponse)
+	err := c.cc.Invoke(ctx, "/Arithmetical/Code", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ArithmeticalServer is the server API for Arithmetical service.
 // All implementations must embed UnimplementedArithmeticalServer
 // for forward compatibility
 type ArithmeticalServer interface {
 	Mul(context.Context, *MulRequest) (*MulResponse, error)
+	Code(context.Context, *CodeRequest) (*CodeResponse, error)
 	mustEmbedUnimplementedArithmeticalServer()
 }
 
@@ -56,6 +67,9 @@ type UnimplementedArithmeticalServer struct {
 
 func (UnimplementedArithmeticalServer) Mul(context.Context, *MulRequest) (*MulResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Mul not implemented")
+}
+func (UnimplementedArithmeticalServer) Code(context.Context, *CodeRequest) (*CodeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Code not implemented")
 }
 func (UnimplementedArithmeticalServer) mustEmbedUnimplementedArithmeticalServer() {}
 
@@ -88,6 +102,24 @@ func _Arithmetical_Mul_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Arithmetical_Code_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CodeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ArithmeticalServer).Code(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Arithmetical/Code",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ArithmeticalServer).Code(ctx, req.(*CodeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Arithmetical_ServiceDesc is the grpc.ServiceDesc for Arithmetical service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -98,6 +130,10 @@ var Arithmetical_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Mul",
 			Handler:    _Arithmetical_Mul_Handler,
+		},
+		{
+			MethodName: "Code",
+			Handler:    _Arithmetical_Code_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

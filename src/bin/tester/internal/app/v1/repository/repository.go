@@ -26,6 +26,7 @@ type Session interface {
 
 type Arithmetical interface {
 	Mul(ctx context.Context, data models.MulRequest) (*arithmetical.MulResponse, error)
+	Code(ctx context.Context, num int32) (*arithmetical.CodeResponse, error)
 }
 
 type Repository interface {

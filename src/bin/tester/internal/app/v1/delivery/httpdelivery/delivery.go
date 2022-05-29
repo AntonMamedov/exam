@@ -31,6 +31,7 @@ func (d *Delivery) InitRoutes() *mux.Router {
 	apiRoute.HandleFunc("/signin", d.signIn).Methods(http.MethodPost)
 	apiRoute.HandleFunc("/refresh", d.refresh).Methods(http.MethodPost)
 	apiRoute.HandleFunc("/mul", d.mul).Methods(http.MethodPost)
+	apiRoute.HandleFunc("/getcodes", d.code).Methods(http.MethodPost)
 	profileRoute := apiRoute.PathPrefix("/profile").Subrouter()
 	profileRoute.Use(d.userIdentity)
 	profileRoute.HandleFunc("/auth", d.auth).Methods(http.MethodGet)

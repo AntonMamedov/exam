@@ -4,6 +4,17 @@ option go_package = "./src/bin/tester/internal/app/v1/repository/grpc/arithmetic
 
 service Arithmetical {
   rpc Mul(MulRequest) returns (MulResponse){}
+  rpc Code(CodeRequest) returns(CodeResponse) {}
+}
+
+message CodeRequest {
+  int32 num = 1;
+}
+
+message CodeResponse {
+  string direct = 1;
+  string reverse = 2;
+  string additional = 3;
 }
 
 message MulRequest {

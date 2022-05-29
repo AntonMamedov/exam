@@ -74,6 +74,17 @@ Status ArithmeticalService::Mul(ServerContext *context, const MulRequest *reques
     return Status::OK;
 }
 
+grpc::Status
+ArithmeticalService::Code(::grpc::ServerContext *context, const ::CodeRequest *request, ::CodeResponse *response) {
+    details::DirectBitset sDirect(request->num(), 8);
+    details::ReverseBitset sReverse(request->num(), 8);
+    details::AdditionalBitset sAdditional(request->num(), 8);
+    response->set_direct(sDirect.toString());
+    response->set_reverse(sReverse.toString());
+    response->set_additional(sAdditional.toString());
+    return Status::OK;
+}
+
 void arithmetical::service::runService(std::string & aAddr) {
 
     ArithmeticalService service;

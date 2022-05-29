@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+option go_package = "./src/bin/tester/internal/app/v1/repository/grpc/arithmetical";
+
 service Arithmetical {
   rpc Mul(MulRequest) returns (MulResponse){}
 }
@@ -14,6 +16,7 @@ message MulRequest {
     CORRECTION_STEP_ADDITIONAL = 1;
     ANALYSIS_ADJACENT_BITS = 2;
     INVERT_NUMBER_BITS = 3;
+    MUL_ON_2_FACTOR_BITS = 4;
   }
   Method method = 5;
 }

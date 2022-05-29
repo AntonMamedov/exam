@@ -4,41 +4,39 @@ import (
 	"errors"
 	"fmt"
 	"github.com/jmoiron/sqlx"
+	"tester/internal/app/v1/repository"
 	"tester/pkg/config"
 )
 
 type Repository struct {
-	Profile *Profile
-	Session *Session
-	Group   *Group
-	Test    *Test
-	db      *sqlx.DB
+	repository.Profile
+	repository.Session
+	repository.Group
+	db *sqlx.DB
 }
 
 func NewPostgresRepository(db *sqlx.DB) (*Repository, error) {
 	if db == nil {
-		return nil, errors.New("db is nil")
+		return nil, errors.New("")
 	}
 	profile, _ := NewProfilePostgres(db)
 	group, _ := NewGroupPostgres(db)
 	session, _ := NewSessionPostgres(db)
-	test, _ := NewTest(db)
 	return &Repository{
 		db:      db,
 		Profile: profile,
 		Group:   group,
 		Session: session,
-		Test:    test,
 	}, nil
 }
 
-func (r Repository) Begin() (*RepositoryTx, error) {
+func (r Repository) Begin() (repository.RepositoryTx, error) {
 	tx, err := r.db.Beginx()
 	if err != nil {
 		return nil, err
 	}
 
-	return &RepositoryTx{
+	return RepositoryTx{
 		tx:         tx,
 		Repository: r,
 	}, nil

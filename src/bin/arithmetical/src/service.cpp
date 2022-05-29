@@ -60,6 +60,12 @@ Status ArithmeticalService::Mul(ServerContext *context, const MulRequest *reques
             sRes = sMultiplier.mulWithInvertNumberBits(sMul, sFactor);
             break;
         }
+        case MulRequest_Method_MUL_ON_2_FACTOR_BITS: {
+            details::DirectBitset sMul(request->mul(), request->grid_size());
+            details::DirectBitset sFactor(request->factor(), request->grid_size());
+            sRes = sMultiplier.mulOnTwoFactorBits(sMul, sFactor);
+            break;
+        }
         case MulRequest_Method_MulRequest_Method_INT_MIN_SENTINEL_DO_NOT_USE_:
         case MulRequest_Method_MulRequest_Method_INT_MAX_SENTINEL_DO_NOT_USE_:
             break;

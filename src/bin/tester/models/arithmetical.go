@@ -26,7 +26,7 @@ type AddRequest struct {
 	Val1     int32    `json:"val1"`
 	Val2     int32    `json:"val2"`
 	Code     CodeEnum `json:"code"`
-	GridSize int32    `json:"grid_ize"`
+	GridSize int32    `json:"grid_size"`
 }
 
 type MulRequest struct {

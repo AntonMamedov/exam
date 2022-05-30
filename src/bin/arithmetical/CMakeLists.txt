@@ -23,7 +23,7 @@ include(cmake/common.cmake)
 get_filename_component(proto "../../../protos/arithmetical.proto" ABSOLUTE)
 get_filename_component(proto_path "${proto}" PATH)
 
-set(PROTO_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/proto")
+set(PROTO_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
 # Generated sources
 set(proto_srcs "${PROTO_SRC_DIR}/arithmetical.pb.cc")

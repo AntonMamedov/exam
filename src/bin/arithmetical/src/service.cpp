@@ -92,9 +92,9 @@ ArithmeticalService::MulOn2(::grpc::ServerContext *context, const ::MulOn2Reques
     details::AdditionalBitset sAdditional(request->mul(), 7);
     auto sPow = request->pow();
     if (sPow < 0) {
-        sDirect >>= sPow;
-        sReverse >>= sPow;
-        sAdditional >>= sPow;
+        sDirect >>= -sPow;
+        sReverse >>= -sPow;
+        sAdditional >>= -sPow;
     } else {
         sDirect <<= sPow;
         sReverse <<= sPow;

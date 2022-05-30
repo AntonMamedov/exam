@@ -37,11 +37,16 @@ func (a ArithmeticalService) Mul(ctx context.Context, mul models.MulRequest) (mo
 	}
 
 	for _, exp := range resp.Exps {
+		skip := false
+		if exp.Act == arithmetical.Exp_NONE {
+			skip = true
+		}
 		mulResp.Exps = append(mulResp.Exps, models.MulExp{
 			Val1:             exp.Val1,
 			Val2:             exp.Val2,
 			IsOverflow:       exp.IsOverflow,
 			IsCorrectionStep: exp.IsCorrectionStep,
+			Skip:             skip,
 		})
 	}
 	return mulResp, nil

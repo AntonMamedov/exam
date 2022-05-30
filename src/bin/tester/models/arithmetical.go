@@ -57,6 +57,7 @@ type MulExp struct {
 	Val2             string `json:"val2"`
 	IsOverflow       bool   `json:"is_overflow"`
 	IsCorrectionStep bool   `json:"is_correction_step"`
+	Skip             bool   `json:"skip"`
 }
 
 type MulResponse struct {

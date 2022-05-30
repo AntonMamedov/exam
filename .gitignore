@@ -3,3 +3,8 @@
 etc
 out
 **/proto
+**/*.pb.cc
+**/*.pb.h
+**/*.log
+bin
+build

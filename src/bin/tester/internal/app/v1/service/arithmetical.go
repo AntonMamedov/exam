@@ -71,3 +71,11 @@ func (a ArithmeticalService) Code(ctx context.Context, num int32) (models.Codes,
 		Additional: resp.Additional,
 	}, nil
 }
+
+func (a ArithmeticalService) Add(ctx context.Context, request models.AddRequest) (string, error) {
+	resp, err := a.grpcRep.Add(ctx, request)
+	if err != nil {
+		return "", err
+	}
+	return resp.GetRes(), nil
+}

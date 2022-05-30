@@ -28,6 +28,7 @@ type Arithmetical interface {
 	Mul(ctx context.Context, data models.MulRequest) (*arithmetical.MulResponse, error)
 	MulOn2(ctx context.Context, mul int32, pow int32) (*arithmetical.CodeResponse, error)
 	Code(ctx context.Context, num int32) (*arithmetical.CodeResponse, error)
+	Add(ctx context.Context, add models.AddRequest) (*arithmetical.AddResponse, error)
 }
 
 type Repository interface {

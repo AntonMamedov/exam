@@ -52,6 +52,20 @@ func (a Arithmetical) MulOn2(ctx context.Context, mul int32, pow int32) (*arithm
 	return resp, nil
 }
 
+func (a Arithmetical) Add(ctx context.Context, add models.AddRequest) (*arithmetical.AddResponse, error) {
+	req := &arithmetical.AddRequest{
+		Val1:     add.Val1,
+		Val2:     add.Val2,
+		Code:     arithmetical.AddRequest_Code(add.Code),
+		GridSize: add.GridSize,
+	}
+	resp, err := a.cl.Add(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 func getMethod(code models.CodeEnum, method models.MulMethodEnum) arithmetical.MulRequest_Method {
 
 	var methodRes arithmetical.MulRequest_Method

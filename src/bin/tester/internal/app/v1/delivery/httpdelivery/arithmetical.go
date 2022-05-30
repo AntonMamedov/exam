@@ -53,3 +53,19 @@ func (d Delivery) mulOn2(w http.ResponseWriter, r *http.Request) {
 
 	d.newResponse(w, r, http.StatusOK, resp)
 }
+
+func (d Delivery) add(w http.ResponseWriter, r *http.Request) {
+	addReq := models.AddRequest{}
+	err := json.NewDecoder(r.Body).Decode(&addReq)
+	if err != nil {
+		d.newErrorResponse(w, r, http.StatusUnprocessableEntity, err)
+		return
+	}
+	resp, err := d.services.Add(r.Context(), addReq)
+	if err != nil {
+		d.newErrorResponse(w, r, http.StatusUnprocessableEntity, err)
+		return
+	}
+
+	d.newResponse(w, r, http.StatusOK, map[string]string{"result": resp})
+}

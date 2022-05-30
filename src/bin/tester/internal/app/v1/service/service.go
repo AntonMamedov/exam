@@ -21,6 +21,7 @@ type Arithmetical interface {
 	Mul(ctx context.Context, mul models.MulRequest) (models.MulResponse, error)
 	MulOn2(ctx context.Context, mul models.MulOn2Request) (models.Codes, error)
 	Code(ctx context.Context, num int32) (models.Codes, error)
+	Add(ctx context.Context, request models.AddRequest) (string, error)
 }
 
 type Service struct {

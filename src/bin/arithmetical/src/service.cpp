@@ -138,7 +138,7 @@ ArithmeticalService::Add(::grpc::ServerContext *context, const ::AddRequest *req
     }
     details::DirectBitset sDirectRes(request->val1() + request->val2(), sRes.size() - 1);
     response->set_res(sRes);
-    response->set_res(sDirectRes.toString());
+    response->set_direct(sDirectRes.toString());
     return Status::OK;
 }
 

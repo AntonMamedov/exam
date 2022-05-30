@@ -61,10 +61,22 @@ Status ArithmeticalService::Mul(ServerContext *context, const MulRequest *reques
             break;
         }
         case MulRequest_Method_MUL_ON_2_FACTOR_BITS: {
-                    details::DirectBitset sMul(request->mul(), request->grid_size());
-                    details::DirectBitset sFactor(request->factor(), request->grid_size());
-                    sRes = sMultiplier.mulOnTwoFactorBits(sMul, sFactor);
-                    break;
+            details::DirectBitset sMul(request->mul(), request->grid_size());
+            details::DirectBitset sFactor(request->factor(), request->grid_size());
+            sRes = sMultiplier.mulOnTwoFactorBits(sMul, sFactor);
+            break;
+        }
+        case MulRequest_Method_MUL_FROM_LOW_BITS: {
+            details::DirectBitset sMul(request->mul(), request->grid_size());
+            details::DirectBitset sFactor(request->factor(), request->grid_size());
+            sRes = sMultiplier.mulFromLowBits(sMul, sFactor);
+            break;
+        }
+        case MulRequest_Method_MUL_FROM_HIGH_BITS: {
+            details::DirectBitset sMul(request->mul(), request->grid_size());
+            details::DirectBitset sFactor(request->factor(), request->grid_size());
+            sRes = sMultiplier.mulFromHighBits(sMul, sFactor);
+            break;
         }
         case MulRequest_Method_MulRequest_Method_INT_MIN_SENTINEL_DO_NOT_USE_:
         case MulRequest_Method_MulRequest_Method_INT_MAX_SENTINEL_DO_NOT_USE_:

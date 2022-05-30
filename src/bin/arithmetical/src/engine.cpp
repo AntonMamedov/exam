@@ -439,3 +439,145 @@ Multiplier::Result Multiplier::mulOnTwoFactorBits(const DirectBitset & aMul, con
             .m_IntermediateExps = std::move(sExps)
     };
 }
+
+Multiplier::Result Multiplier::mulFromLowBits(const DirectBitset & aMul, const DirectBitset & aFactor) const {
+    auto sMul = aMul;
+    auto sFactor = aFactor;
+
+    bool sMulIsNegative = sMul.sign();
+    bool sFactorIsNegative = sFactor.sign();
+
+    if (sMulIsNegative)
+        sMul = -sMul;
+
+    if (sFactorIsNegative)
+        sFactor = -sFactor;
+
+    sMul <<= sMul.size() - (m_NumberSize);
+    sFactor <<= sFactor.size() - (m_NumberSize);
+    std::queue<Action> sActions;
+    for (size_t i = sFactor.size() - m_NumberSize; i < sFactor.size(); i++) {
+        if (!sFactor[i]) {
+            sActions.push(Action::NONE);
+        } else {
+            sActions.push(Action::ADD);
+        }
+    }
+
+    bits_t sPartialSum(sMul.size(), 0);
+    bits_t sRes(sMul.size(), 0);
+    std::vector<Expression> sExps;
+    while (!sActions.empty()) {
+        auto sAction = sActions.front();
+        sActions.pop();
+        sPartialSum = sRes;
+        switch (sAction) {
+            case Action::ADD:
+                sRes= sPartialSum + sMul.bitset();
+            case Action::NONE:
+                sRes >>= 1;
+                break;
+            default:
+                assert(false && "incorrect Action");
+        }
+        sExps.emplace_back(Expression{
+                .m_Val1 = bitset2string(sPartialSum),
+                .m_Val2 = bitset2string(sMul.bitset()),
+                .m_Action = sAction,
+                .m_IsCorrectionStep = false,
+                .m_IsOverflow = false
+        });
+    }
+
+    bool sResSign = false;
+    if (sFactorIsNegative == sMulIsNegative == 1) {
+        sResSign = false;
+    } else if ((sFactorIsNegative | sMulIsNegative) == 1) {
+        sResSign = true;
+    }
+
+    sPartialSum[sPartialSum.size() - 1] = sResSign;
+    return Result{
+            .m_Code = Code::DIRECT,
+            .m_Method = Method::FROM_LOW_BITS,
+            .m_Val1 = bitset2string(aMul.bitset()).substr(aMul.size() - m_NumberSize),
+            .m_Val2 = bitset2string(aFactor.bitset()).substr(aFactor.size() - m_NumberSize),
+            .m_Result = bitset2string(sPartialSum),
+            .m_IntermediateExps = std::move(sExps)
+    };
+}
+
+Multiplier::Result Multiplier::mulFromHighBits(const DirectBitset & aMul, const DirectBitset & aFactor) const {
+    auto sMul = aMul;
+    auto sFactor = aFactor;
+
+    bool sMulIsNegative = sMul.sign();
+    bool sFactorIsNegative = sFactor.sign();
+
+    if (sMulIsNegative)
+        sMul = -sMul;
+
+    if (sFactorIsNegative)
+        sFactor = -sFactor;
+
+    sMul <<= sMul.size() - (m_NumberSize);
+    sFactor <<= sFactor.size() - (m_NumberSize);
+    sMul >>= sMul.size() - (m_NumberSize);
+    sFactor >>= sFactor.size() - (m_NumberSize);
+    std::cout << sMul.bitset() << std::endl;
+    std::cout << sFactor.bitset() << std::endl;
+    std::cout << "-----------------------------" << std::endl;
+    std::queue<Action> sActions;
+    for (int i = m_NumberSize - 2; i >= 0; i--) {
+        if (!sFactor[i]) {
+            sActions.push(Action::NONE);
+        } else {
+            sActions.push(Action::ADD);
+        }
+    }
+
+    bits_t sPartialSum(sMul.size(), 0);
+    bits_t sRes(sMul.size(), 0);
+    std::vector<Expression> sExps;
+    while (!sActions.empty()) {
+        auto sAction = sActions.front();
+        sActions.pop();
+        sPartialSum = sRes;
+        switch (sAction) {
+            case Action::ADD:
+                sRes= sPartialSum + sMul.bitset();
+            case Action::NONE:
+                sRes <<= 1;
+                break;
+            default:
+                assert(false && "incorrect Action");
+        }
+        std::cout << sPartialSum << std::endl;
+        std::cout << sMul.bitset() << std::endl;
+        std::cout << "-----------------------------" << std::endl;
+        sExps.emplace_back(Expression{
+                .m_Val1 = bitset2string(sPartialSum),
+                .m_Val2 = bitset2string(sMul.bitset()),
+                .m_Action = sAction,
+                .m_IsCorrectionStep = false,
+                .m_IsOverflow = false
+        });
+    }
+    sRes >>= 1;
+    bool sResSign = false;
+    if (sFactorIsNegative == sMulIsNegative == 1) {
+        sResSign = false;
+    } else if ((sFactorIsNegative | sMulIsNegative) == 1) {
+        sResSign = true;
+    }
+
+    sRes[sPartialSum.size() - 1] = sResSign;
+    return Result{
+            .m_Code = Code::DIRECT,
+            .m_Method = Method::FROM_HIGH_BITS,
+            .m_Val1 = bitset2string(aMul.bitset()).substr(aMul.size() - m_NumberSize),
+            .m_Val2 = bitset2string(aFactor.bitset()).substr(aFactor.size() - m_NumberSize),
+            .m_Result = bitset2string(sRes),
+            .m_IntermediateExps = std::move(sExps)
+    };
+}

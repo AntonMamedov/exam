@@ -23,7 +23,9 @@ namespace arithmetical::engine {
             CORRECTION_STEP,
             ANALYSIS_ADJACENT_BITS,
             INVERT_NUMBER_BITS,
-            ON_TWO_FACTOR_BITS
+            ON_TWO_FACTOR_BITS,
+            FROM_LOW_BITS,
+            FROM_HIGH_BITS
         };
 
         struct Expression {
@@ -58,6 +60,10 @@ namespace arithmetical::engine {
                                                        const details::AdditionalBitset & aFactor) const;
         Multiplier::Result mulWithInvertNumberBits(const details::ReverseBitset & aMul,
                                                    const details::ReverseBitset & aFactor) const;
+        Multiplier::Result mulFromLowBits(const details::DirectBitset & aMul,
+                                          const details::DirectBitset & aFactor) const;
+        Multiplier::Result mulFromHighBits(const details::DirectBitset & aMul,
+                                           const details::DirectBitset & aFactor) const;
 
     private:
         size_t m_NumberSize;

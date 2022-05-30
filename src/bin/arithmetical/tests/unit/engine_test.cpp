@@ -178,3 +178,27 @@ TEST(EngineTst, TestMulOnTwoFactorBits) {
         ASSERT_EQ(sResult.m_Result, "001111110");
     }
 }
+
+TEST(EngineTst, TestMulFromLowBits) {
+    {
+        DirectBitset sMul(-9, 8);
+        DirectBitset sFactor(-13, 8);
+
+        Multiplier sMultiplier(5);
+        auto sResult = sMultiplier.mulFromLowBits(sMul, sFactor);
+
+        ASSERT_EQ(sResult.m_Result, "001110101");
+    }
+}
+
+TEST(EngineTst, TestMulFromHighBits) {
+    {
+        DirectBitset sMul(-9, 8);
+        DirectBitset sFactor(-13, 8);
+
+        Multiplier sMultiplier(5);
+        auto sResult = sMultiplier.mulFromHighBits(sMul, sFactor);
+
+        ASSERT_EQ(sResult.m_Result, "001110101");
+    }
+}

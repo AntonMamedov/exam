@@ -76,9 +76,30 @@ Status ArithmeticalService::Mul(ServerContext *context, const MulRequest *reques
 
 grpc::Status
 ArithmeticalService::Code(::grpc::ServerContext *context, const ::CodeRequest *request, ::CodeResponse *response) {
-    details::DirectBitset sDirect(request->num(), 8);
-    details::ReverseBitset sReverse(request->num(), 8);
-    details::AdditionalBitset sAdditional(request->num(), 8);
+    details::DirectBitset sDirect(request->num(), 7);
+    details::ReverseBitset sReverse(request->num(), 7);
+    details::AdditionalBitset sAdditional(request->num(), 7);
+    response->set_direct(sDirect.toString());
+    response->set_reverse(sReverse.toString());
+    response->set_additional(sAdditional.toString());
+    return Status::OK;
+}
+
+grpc::Status
+ArithmeticalService::MulOn2(::grpc::ServerContext *context, const ::MulOn2Request *request, ::CodeResponse *response) {
+    details::DirectBitset sDirect(request->mul(), 7);
+    details::ReverseBitset sReverse(request->mul(), 7);
+    details::AdditionalBitset sAdditional(request->mul(), 7);
+    auto sPow = request->pow();
+    if (sPow < 0) {
+        sDirect >>= sPow;
+        sReverse >>= sPow;
+        sAdditional >>= sPow;
+    } else {
+        sDirect <<= sPow;
+        sReverse <<= sPow;
+        sAdditional <<= sPow;
+    }
     response->set_direct(sDirect.toString());
     response->set_reverse(sReverse.toString());
     response->set_additional(sAdditional.toString());

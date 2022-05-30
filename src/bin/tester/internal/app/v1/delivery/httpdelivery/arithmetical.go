@@ -19,7 +19,7 @@ func (d Delivery) mul(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	d.newResponse(w, r, http.StatusCreated, resp)
+	d.newResponse(w, r, http.StatusOK, resp)
 }
 
 func (d Delivery) code(w http.ResponseWriter, r *http.Request) {
@@ -30,6 +30,22 @@ func (d Delivery) code(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	resp, err := d.services.Code(r.Context(), codeReq["num"])
+	if err != nil {
+		d.newErrorResponse(w, r, http.StatusUnprocessableEntity, err)
+		return
+	}
+
+	d.newResponse(w, r, http.StatusOK, resp)
+}
+
+func (d Delivery) mulOn2(w http.ResponseWriter, r *http.Request) {
+	mulOn2Req := models.MulOn2Request{}
+	err := json.NewDecoder(r.Body).Decode(&mulOn2Req)
+	if err != nil {
+		d.newErrorResponse(w, r, http.StatusUnprocessableEntity, err)
+		return
+	}
+	resp, err := d.services.MulOn2(r.Context(), mulOn2Req)
 	if err != nil {
 		d.newErrorResponse(w, r, http.StatusUnprocessableEntity, err)
 		return

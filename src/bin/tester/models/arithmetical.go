@@ -58,3 +58,8 @@ type MulResponse struct {
 	Result string   `json:"result"`
 	Exps   []MulExp `json:"exps"`
 }
+
+type MulOn2Request struct {
+	Mul int32 `json:"mul"`
+	Pow int32 `json:"pow"`
+}

@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ArithmeticalClient interface {
 	Mul(ctx context.Context, in *MulRequest, opts ...grpc.CallOption) (*MulResponse, error)
+	MulOn2(ctx context.Context, in *MulOn2Request, opts ...grpc.CallOption) (*CodeResponse, error)
 	Code(ctx context.Context, in *CodeRequest, opts ...grpc.CallOption) (*CodeResponse, error)
 }
 
@@ -43,6 +44,15 @@ func (c *arithmeticalClient) Mul(ctx context.Context, in *MulRequest, opts ...gr
 	return out, nil
 }
 
+func (c *arithmeticalClient) MulOn2(ctx context.Context, in *MulOn2Request, opts ...grpc.CallOption) (*CodeResponse, error) {
+	out := new(CodeResponse)
+	err := c.cc.Invoke(ctx, "/Arithmetical/MulOn2", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *arithmeticalClient) Code(ctx context.Context, in *CodeRequest, opts ...grpc.CallOption) (*CodeResponse, error) {
 	out := new(CodeResponse)
 	err := c.cc.Invoke(ctx, "/Arithmetical/Code", in, out, opts...)
@@ -57,6 +67,7 @@ func (c *arithmeticalClient) Code(ctx context.Context, in *CodeRequest, opts ...
 // for forward compatibility
 type ArithmeticalServer interface {
 	Mul(context.Context, *MulRequest) (*MulResponse, error)
+	MulOn2(context.Context, *MulOn2Request) (*CodeResponse, error)
 	Code(context.Context, *CodeRequest) (*CodeResponse, error)
 	mustEmbedUnimplementedArithmeticalServer()
 }
@@ -67,6 +78,9 @@ type UnimplementedArithmeticalServer struct {
 
 func (UnimplementedArithmeticalServer) Mul(context.Context, *MulRequest) (*MulResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Mul not implemented")
+}
+func (UnimplementedArithmeticalServer) MulOn2(context.Context, *MulOn2Request) (*CodeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MulOn2 not implemented")
 }
 func (UnimplementedArithmeticalServer) Code(context.Context, *CodeRequest) (*CodeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Code not implemented")
@@ -102,6 +116,24 @@ func _Arithmetical_Mul_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Arithmetical_MulOn2_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MulOn2Request)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ArithmeticalServer).MulOn2(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Arithmetical/MulOn2",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ArithmeticalServer).MulOn2(ctx, req.(*MulOn2Request))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Arithmetical_Code_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CodeRequest)
 	if err := dec(in); err != nil {
@@ -130,6 +162,10 @@ var Arithmetical_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Mul",
 			Handler:    _Arithmetical_Mul_Handler,
+		},
+		{
+			MethodName: "MulOn2",
+			Handler:    _Arithmetical_MulOn2_Handler,
 		},
 		{
 			MethodName: "Code",

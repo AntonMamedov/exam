@@ -39,6 +39,19 @@ func (a Arithmetical) Code(ctx context.Context, num int32) (*arithmetical.CodeRe
 	return resp, nil
 }
 
+func (a Arithmetical) MulOn2(ctx context.Context, mul int32, pow int32) (*arithmetical.CodeResponse, error) {
+	req := &arithmetical.MulOn2Request{
+		Mul: mul,
+		Pow: pow,
+	}
+
+	resp, err := a.cl.MulOn2(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 func getMethod(code models.CodeEnum, method models.MulMethodEnum) arithmetical.MulRequest_Method {
 
 	var methodRes arithmetical.MulRequest_Method

@@ -342,6 +342,22 @@ Multiplier::mulWithInvertNumberBits(const ReverseBitset & aMul, const ReverseBit
 
 Multiplier::Result Multiplier::mulOnTwoFactorBits(const DirectBitset & aMul, const DirectBitset & aFactor) const {
     auto sFactorBitset = aFactor.reverse().bitset();
+    auto sMul = aMul;
+    sMul <<= sMul.size() - (m_NumberSize);
+
+    bool sFactorIsNegative = false;
+    bool sMulIsNegative = false;
+
+    if (aMul[aMul.size() - 1]) {
+        sMulIsNegative = true;
+        sMul = -sMul;
+    }
+
+    if (aFactor[aFactor.size() - 1]) {
+        sFactorIsNegative = true;
+        sFactorBitset[sFactorBitset.size() - 1] = false;
+    }
+
     sFactorBitset >>= m_NumberSize;
     sFactorBitset.resize(sFactorBitset.size() - m_NumberSize);
     std::vector<int> sActionsList{0};
@@ -366,8 +382,7 @@ Multiplier::Result Multiplier::mulOnTwoFactorBits(const DirectBitset & aMul, con
         sActions.push(sAct);
     }
 
-    auto sMul = aMul;
-    sMul <<= sMul.size() - (m_NumberSize);
+
     std::vector<std::optional<bits_t>> sBitsets;
     while (!sActions.empty()) {
         int sAct = sActions.top();
@@ -429,6 +444,14 @@ Multiplier::Result Multiplier::mulOnTwoFactorBits(const DirectBitset & aMul, con
     if (sPartialSum.size() > aMul.size()) {
         sPartialSum.pop_back();
     }
+
+    bool sResSign = false;
+    if (sFactorIsNegative == sMulIsNegative == 1) {
+        sResSign = false;
+    } else if ((sFactorIsNegative | sMulIsNegative) == 1) {
+        sResSign = true;
+    }
+    sPartialSum[sPartialSum.size() - 1] = sResSign;
 
     return Result{
             .m_Code = Code::DIRECT,

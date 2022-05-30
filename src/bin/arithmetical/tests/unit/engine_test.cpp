@@ -159,13 +159,13 @@ TEST(EngineTst, TestMulOnTwoFactorBits) {
     }
 
     {
-        DirectBitset sMul(9, 8);
+        DirectBitset sMul(-9, 8);
         DirectBitset sFactor(15, 8);
 
         Multiplier sMultiplier(5);
         auto sResult = sMultiplier.mulOnTwoFactorBits(sMul, sFactor);
 
-        ASSERT_EQ(sResult.m_Result, "010000111");
+        ASSERT_EQ(sResult.m_Result, "110000111");
     }
 
     {

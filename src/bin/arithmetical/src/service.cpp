@@ -118,6 +118,28 @@ ArithmeticalService::MulOn2(::grpc::ServerContext *context, const ::MulOn2Reques
     return Status::OK;
 }
 
+grpc::Status
+ArithmeticalService::Add(::grpc::ServerContext *context, const ::AddRequest *request, ::AddResponse *response) {
+    std::string sRes;
+    switch (request->code()) {
+        case AddRequest_Code_DIRECT:
+            sRes = engine::Adder::Add<details::Code::DIRECT>(request->val1(), request->val2(), request->grid_size());
+            break;
+        case AddRequest_Code_REVERSE:
+            sRes = engine::Adder::Add<details::Code::REVERSE>(request->val1(), request->val2(), request->grid_size());
+            break;
+        case AddRequest_Code_ADDITIONAL:
+            sRes = engine::Adder::Add<details::Code::ADDITIONAL>(request->val1(), request->val2(), request->grid_size());
+            break;
+        case AddRequest_Code_AddRequest_Code_INT_MIN_SENTINEL_DO_NOT_USE_:
+            break;
+        case AddRequest_Code_AddRequest_Code_INT_MAX_SENTINEL_DO_NOT_USE_:
+            break;
+    }
+    response->set_res(sRes);
+    return Status::OK;
+}
+
 void arithmetical::service::runService(std::string & aAddr) {
 
     ArithmeticalService service;

@@ -3,9 +3,26 @@ syntax = "proto3";
 option go_package = "./src/bin/tester/internal/app/v1/repository/grpc/arithmetical";
 
 service Arithmetical {
-  rpc Mul(MulRequest) returns (MulResponse){}
-  rpc MulOn2(MulOn2Request) returns (CodeResponse){}
+  rpc Mul(MulRequest) returns (MulResponse) {}
+  rpc MulOn2(MulOn2Request) returns (CodeResponse) {}
   rpc Code(CodeRequest) returns(CodeResponse) {}
+  rpc Add(AddRequest) returns(AddResponse) {}
+}
+
+message AddRequest {
+  int32 val1 = 1;
+  int32 val2 = 2;
+  enum Code {
+    DIRECT = 0;
+    REVERSE = 1;
+    ADDITIONAL = 2;
+  }
+  Code code = 3;
+  int32 grid_size = 4;
+}
+
+message AddResponse {
+  string res = 1;
 }
 
 message MulOn2Request {

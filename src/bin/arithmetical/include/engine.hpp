@@ -68,4 +68,14 @@ namespace arithmetical::engine {
     private:
         size_t m_NumberSize;
     };
+
+    class Adder {
+    public:
+        template<details::Code code>
+        static std::string Add(int aVal1, int aVal2, size_t aGridSize) {
+            int sRes = aVal1 + aVal2;
+            details::Bitset<code> aResCode (sRes, aGridSize);
+            return aResCode.toString();
+        }
+    };
 }

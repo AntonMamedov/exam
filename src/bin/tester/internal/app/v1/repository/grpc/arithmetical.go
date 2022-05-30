@@ -59,8 +59,10 @@ func getMethod(code models.CodeEnum, method models.MulMethodEnum) arithmetical.M
 	if code == models.Direct {
 		switch method {
 		case 0:
+			methodRes = arithmetical.MulRequest_MUL_FROM_LOW_BITS
 			break
 		case 1:
+			methodRes = arithmetical.MulRequest_MUL_FROM_HIGH_BITS
 			break
 		case 2:
 			methodRes = arithmetical.MulRequest_MUL_ON_2_FACTOR_BITS
@@ -68,6 +70,10 @@ func getMethod(code models.CodeEnum, method models.MulMethodEnum) arithmetical.M
 		default:
 			panic(fmt.Sprintf("method %d dose not exists", method))
 		}
+	} else if code == models.Reverse {
+		panic(fmt.Sprintf("code %d dose not exists", method))
+	} else {
+		panic(fmt.Sprintf("code %d dose not exists", method))
 	}
 	return methodRes
 }

@@ -202,3 +202,11 @@ TEST(EngineTst, TestMulFromHighBits) {
         ASSERT_EQ(sResult.m_Result, "001110101");
     }
 }
+
+TEST(EngineTst, TestAdd) {
+    {
+        auto sResult = Adder::Add<arithmetical::details::Code::ADDITIONAL>(-9, 13, 8);
+
+        std::cout << sResult << std::endl;
+    }
+}
